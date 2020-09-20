@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <meta charset="utf-8"></meta>
+    <title>Budget Tracker</title>
+    <h:head>
+    </h:head>
+    <body>                
+        <h:messages showSummary="true" 
+                    showDetail="false"
+                    errorStyle="color: #d20005" 
+                    infoStyle="color: blue"/>
+        <h1 id="loginWelcome" style="display:none; color:#00FF00;"> Welcome #{users.username}</h1>
+        <h1>Stay on top of your finances all in one place!</h1>
+
+        <h:form >
+            <div id ="loginOptions" style ="display: block;">
+                <h:commandButton role="button" 
+                                 id="login" 
+                                 value="Login"
+                                 style="display: inline-block"
+                                 action="login" />
+                <h:commandButton 
+                    id="create" 
+                    value="Sign-up" 
+                    style="display: inline-block"
+                    action="create" />
+            </div>
+            <div id ="afterLogin" style ="display: none;">
+                <h:form style="display: inline-block">
+                    <h:inputText id="username"
+                                 style="display:none;"
+                                 value="#{users.username}"
+                                 maxlength="25" />
+                    <h:inputText id="userID"
+                                 value="#{users.userID}"
+                                 style="display:none;"
+                                 maxlength="25" />
+                    <p></p>
+                    <h:commandButton 
+                        id="submit" 
+                        value="Lets start budgeting!" 
+                        action="Mainpage" />
+                </h:form>
+                <h:form style="display: inline-block">
+                    <h:commandButton id="reset" value="Logout" action="index"/>
+                </h:form>
+            </div>
+        </h:form>
+        <h1 id="userExists" style="display:none; color:red;">Sorry, username already exists!</h1>
+        <h1 id="failed" style="display:none; color:red;">Error! Incorrect information entered</h1>
+        <h1 id="passwordMismatch" style="display:none; color:red;">Error! Passwords do not match.</h1>
+        <script>
+            if (#{users.userID} !== 0) {
+                var user = #{users.userID};
+                console.log("Inside If " + user);
+            }
+            console.log("Outside IF " + user);
+            if (#{users.userID} === 0) {
+                if (#{users.loginAttempted}) {
+                    document.getElementById("failed").style.display = "block";
+                }
+            } else {
+                document.getElementById("failed").style.display = "none";
+            }
+            if (#{users.userID} === 0) {//check if user is logged on and hide button if they are logged in
+                document.getElementById("loginWelcome").style.display = "none";
+                if (#{users.userExists}) {
+                    document.getElementById("userExists").style.display = "block";
+                    document.getElementById("loginWelcome").style.display = "none";//hide welcome
+                    //document.getElementById("notLoggedIn").style.display = "none";
+                }
+                if (#{users.passwordMismatch}) {
+                    document.getElementById("passwordMismatch").style.display = "block"
+                    //document.getElementById("notLoggedIn").style.display = "none";
+                }
+            }
+            if (#{users.userID} !== 0) {//check if user is logged on and hide button if they are
+                document.getElementById("loginOptions").style.display = "none";
+                document.getElementById("afterLogin").style.display = "block";//Hide the login options
+                alert("Welcome " + "#{users.username}" + "!");//welcome message instead of logon button
+            }</script>
+    </body>
+</html>

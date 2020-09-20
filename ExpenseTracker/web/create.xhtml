@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <h:head>
+        <title>New User</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <body>
+                <h2 style="font-size: 2rem;">Welcome!</h2>
+                <h:form>
+                    <br></br>
+                    <h4>Name</h4>
+                    <h:inputText id="name"
+                                 value="#{users.name}"
+                                 required="true"
+                                 requiredMessage="Please enter something."
+                                 maxlength="25" />
+                    <p></p>
+                    <h4>Username</h4>
+                    <h:inputText id="username"
+                                 value="#{users.username}"
+                                 required="true"
+                                 requiredMessage="Please enter something."
+                                 maxlength="25" />
+                    <p></p>
+                    <h4>Password</h4>
+                    <h:inputSecret id="password"
+                                   value="#{users.password}"
+                                   required="true"
+                                   requiredMessage="Please enter something."
+                                   maxlength="25" />
+                    <p></p>
+                    <h4>Please re-enter your password</h4>
+                    <h:inputSecret id="passwordCheck"
+                                   value="#{users.passwordCheck}"
+                                   required="true"
+                                   requiredMessage="Please enter something."
+                                   maxlength="25" />
+                    <p></p>
+                    <h4>Your Email address</h4>
+                    <h:inputText id="email"
+                                 value="#{users.email}"
+                                 required="true"
+                                 requiredMessage="Please enter something."
+                                 maxlength="25" />
+                    <p></p>
+
+                    <!--//Need to send the data and initiate a table.  So added a hidden item-->
+                    <h:selectOneMenu value="#{users.table}" style="display:none">
+                        <f:selectItem itemValue="create" itemLabel="Create"/>
+                    </h:selectOneMenu>
+                    <p></p>
+                    <h:commandButton id="submit" value="Create the account!" action="index" />
+                    <h:commandButton id="reset" value="Reset the form" type="reset" />
+                </h:form>
+                <h:form>                    
+                    <h:commandButton id="back" value="Back to the main page" action="index" />
+                </h:form>
+    </body>
+</html>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Response</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h2>Total Expense</h2>
+            <h2 id="totalExpense" 
+                style="color:tomato;">Error, check javascript
+            </h2>
+            <h:commandButton id="back" 
+                             value="Back" 
+                             action="Mainpage" />
+            <h:inputText id="username"
+                         style="display:none;"
+                         value="#{users.username}"
+                         maxlength="25" />
+            <h:inputText id="userID"
+                         value="#{users.userID}"
+                         style="display:none;"
+                         maxlength="25" />
+            <p></p>
+            Expense ID|| Date|| Category|| Amount|| Notes||
+            <p></p>
+            <c:forEach begin="1" end="#{users.countE}"><p></p>
+                <c:forEach begin="1" end="5">
+                    #{users.getExpenseTableData()} ||
+                </c:forEach>
+            </c:forEach>        
+        </h:form>
+        <script>
+            var total = #{users.total} * -1;
+            if (total % 1 === 0) {//check for trailing 0's    
+                document.getElementById("totalExpense").innerHTML = "-$" + total + ".00";
+            } else if ((total * 10) % 1 === 0) {
+                document.getElementById("totalExpense").innerHTML = "-$" + total + "0";
+            } else {
+                document.getElementById("totalExpense").innerHTML = "-$" + total;
+            }
+        </script>
+    </h:body>
+</html>

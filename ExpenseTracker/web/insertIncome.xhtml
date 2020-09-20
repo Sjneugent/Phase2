@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <meta charset="utf-8"/>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        $(function () {
+            $("#datepicker").datepicker();
+        });
+    </script>
+    <h:head>
+        <title>Insert</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <body> 
+                <h:form>
+                    <h3 style="font-size: 2rem; color: springgreen;margin-block-start: auto;">Add Income!</h3>
+                    <h:inputText id="username"
+                                 value="#{users.username}"
+                                 required="false"
+                                 requiredMessage="Please enter something."
+                                 maxlength="25" 
+                                 style="display:none"/>
+                    <h:inputText style="display:none;"
+                                 id="USERID"
+                                 value="#{users.userID}"
+                                 required="true"
+                                 requiredMessage="Please enter something."
+                                 maxlength="25" />
+                    <p></p>
+                    <h4>Date</h4>
+                    <div style="height: 12rem;">
+                        <h:inputText styleClass="datepicker"   
+                                 id="datepicker"
+                                 value="#{users.date}"
+                                 required="true"
+                                 requiredMessage="Looks like you forgot a date!"
+                                 maxlength="25"
+                                 />    
+                    </div>
+                    <h4>Type of Income</h4>
+                    <h:inputText id="type"
+                                 value="#{users.type}"
+                                 maxlength="25" />
+                    <p></p>
+                    <h4>Amount</h4>
+                    <h:inputText id="amount"
+                                 value="#{users.amount}"
+                                 maxlength="25">
+                    </h:inputText>
+                    <p></p>
+                    <h4>Any notes to add?</h4>
+                    <h:inputText id="notes"
+                                 value="#{users.notes}"
+                                 maxlength="80" />
+                    <p></p>
+                    <h:selectOneMenu style="display:none" value="#{users.table}">
+                        <f:selectItem itemValue="insertIncome"  itemLabel="Insert"/>
+                    </h:selectOneMenu> 
+                    <p></p>
+                    <h:commandButton id="submit" value="Insert into the database" 
+                                     action="insertIncome" />
+                </h:form>
+                <h:form>
+                    <h:inputText id="userID"
+                                 value="#{users.userID}"
+                                 autocomplete="off"
+                                 requiredMessage="Please enter something."
+                                 maxlength="25" 
+                                 style="display:none"/>
+
+                    <h:inputText id="username"
+                                 value="#{users.username}"
+                                 autocomplete="off"
+                                 requiredMessage="Please enter something."
+                                 maxlength="25" 
+                                 style="display:none"/>
+                    <h:commandButton id="back" value="Back to the main page" action="Mainpage" />
+                </h:form>
+                <h2 style="display:none; color:red;" 
+                    id="inserted"
+                    >Inserted!
+                </h2>
+                <h2 style="display:none; 
+                    color:red;" 
+                    id="emptyType"
+                    >The type of income is required and helpful when planning a budget!
+                </h2>
+                <h2 style="display:none; color:red;" 
+                    id="emptyAmount"
+                    >Please enter an amount! (numbers only)
+                </h2>
+                <h2 style="display:none; color:red;" 
+                    id="amountNotNumber"
+                    >Invalid format...(numbers only please)
+                </h2>
+        <script>
+            $(document).ready(function () {
+                $(".datepicker").datepicker({
+                    dateFormat: 'yy/mm/dd',
+                    showOn: "button",
+                    buttonText: "Select date"})
+            });
+            if (#{users.insertSuccess}) {
+                console.log("insert good! " + #{users.insertSuccess});
+                document.getElementById("inserted").style.display = "block";
+            }
+            if (#{users.typeEmpty}) {
+                console.log("insert type empty " + #{users.typeEmpty});
+                document.getElementById("emptyType").style.display = "block";
+                document.getElementById("j_idt2:type").style.border = "thick solid red";
+            }
+            if (#{users.amountEmpty}) {
+                console.log("insert amount empty " + #{users.amountEmpty});
+                document.getElementById("emptyAmount").style.display = "block";
+                document.getElementById("j_idt2:amount").style.border = "thick solid red";
+            } else if (#{users.amountNotNumber}) {
+                console.log("insert amount has incorrect format " + #{users.amountNotNumber});
+                document.getElementById("amountNotNumber").style.display = "block";
+                document.getElementById("j_idt2:amount").style.border = "thick solid red";
+            }
+        </script>
+    </body>
+</html>
