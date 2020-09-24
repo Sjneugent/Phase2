@@ -54,7 +54,7 @@ public class Users implements Serializable {
     private static int count = 0;
     private static int expenseIDCount = 0;
     private static int incomeIDCount = 0;
-    private static String dbURL = "jdbc:derby://localhost:1527/contact;create=true;user=nbuser;password=nbuser";
+    private static String dbURL = "jdbc:mysql://localhost:3306/expense?user=nbuser&password=nbuser";
     private static String usersTable = "APP.Users";
     private static String incomeTable = "APP.Income";
     private static String expenseTable = "APP.Expenses";
@@ -456,9 +456,8 @@ public class Users implements Serializable {
         return count / 5;
     }
 
-    public void setTable(String t) {//t holds the value that is passed in
-        if ("login".equalsIgnoreCase(t)) {
-            System.out.println("Logging in...");//test only see glassfish server output
+    private void login(){
+        System.out.println("Logging in...");//test only see glassfish server output
             allIncomeIDs = new int[10000];
             incomeIDCount = 0;
             allExpenseIDs = new int[10000];
@@ -474,7 +473,6 @@ public class Users implements Serializable {
                 except.printStackTrace();
             }
             try {//connect to the database
-                System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                 stmt = conn.createStatement();
                 ResultSet results = stmt.executeQuery("select * from " + usersTable);
                 while (results.next()) {
@@ -498,8 +496,10 @@ public class Users implements Serializable {
             } catch (SQLException sqlExcept) {
                 sqlExcept.printStackTrace();
             }
-        } else if ("create".equalsIgnoreCase(t)) {
-            System.out.println("Creating user...");//test only see glassfish server output
+    }
+    
+    private void userCreation(){
+        System.out.println("Creating user...");//test only see glassfish server output
             allIncomeIDs = new int[10000];
             incomeIDCount = 0;
             allExpenseIDs = new int[10000];
@@ -515,7 +515,6 @@ public class Users implements Serializable {
             }
 
             try {//connect to the database
-                System.out.println("Connecting to database for: " + t + " check");//test only see glassfish server output
                 stmt = conn.createStatement();
                 ResultSet results = stmt.executeQuery("select * from " + usersTable);
                 while (results.next()) {
@@ -557,7 +556,6 @@ public class Users implements Serializable {
                         except.printStackTrace();
                     }
                     try {//connect to the database
-                        System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                         stmt = conn.createStatement();
                         ResultSet results = stmt.executeQuery("SELECT COUNT(*) AS rowcount from " + usersTable);
                         results.next();
@@ -588,8 +586,10 @@ public class Users implements Serializable {
                     }
                 }
             }
-        } else if ("income".equalsIgnoreCase(t)) {
-            System.out.println("Getting income...");//test only see glassfish server output
+    }
+    
+    private void createIncome(){
+          System.out.println("Getting income...");//test only see glassfish server output
             allIncomeIDs = new int[10000];
             incomeIDCount = 0;
             count = 0;//reset counter for array
@@ -602,7 +602,6 @@ public class Users implements Serializable {
                 except.printStackTrace();
             }
             try {//connect to the database
-                System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                 stmt = conn.createStatement();
                 ResultSet results = stmt.executeQuery("select * from " + incomeTable + " order by INCOMEID ASC");
                 int onlyOnce = 0;//only load the object array once
@@ -625,8 +624,9 @@ public class Users implements Serializable {
             } catch (SQLException sqlExcept) {
                 sqlExcept.printStackTrace();
             }
-        } else if ("expense".equalsIgnoreCase(t)) {
-            System.out.println("Getting Expenses...");//test only see glassfish server output
+    }
+    private void createExpense(){
+        System.out.println("Getting Expenses...");//test only see glassfish server output
             allExpenseIDs = new int[10000];
             expenseIDCount = 0;
             count = 0;//reset counter for array
@@ -639,7 +639,6 @@ public class Users implements Serializable {
                 except.printStackTrace();
             }
             try {//connect to the database
-                System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                 stmt = conn.createStatement();
                 ResultSet results = stmt.executeQuery("select * from " + expenseTable + " order by EXPENSEID ASC");
                 int onlyOnce = 0;
@@ -661,8 +660,10 @@ public class Users implements Serializable {
             } catch (SQLException sqlExcept) {
                 sqlExcept.printStackTrace();
             }
-        } else if ("insertIncome".equalsIgnoreCase(t)) {
-            System.out.println("Getting ready to insert income...");//test only see glassfish server output
+    }
+    
+    private void insertIncome(){
+         System.out.println("Getting ready to insert income...");//test only see glassfish server output
             if (type.isEmpty() || amount.isEmpty() || !isAmountDouble(amount)) {
                 if (type.isEmpty()) {
                     System.out.println("type is empty...exiting!");
@@ -681,7 +682,6 @@ public class Users implements Serializable {
                 count = 0;//reset counter for array
                 x = 0;//reset counter in get
                 try {//connect to the database
-                    System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                     stmt = conn.createStatement();
                     //determine unique ID
                     ResultSet results = stmt.executeQuery("select incomeID from " + incomeTable + " order by INCOMEID ASC");
@@ -720,8 +720,10 @@ public class Users implements Serializable {
                     sqlExcept.printStackTrace();
                 }
             }
-        } else if ("insertExpense".equalsIgnoreCase(t)) {
-            System.out.println("Getting ready to insert expense...");//test only see glassfish server output
+    }
+    
+    private void insertExpense(){
+          System.out.println("Getting ready to insert expense...");//test only see glassfish server output
             if (type.isEmpty() || amount.isEmpty() || !isAmountDouble(amount)) {
                 if (type.isEmpty()) {
                     System.out.println("type is empty... exiting! ");
@@ -740,7 +742,6 @@ public class Users implements Serializable {
                 count = 0;//reset counter for array
                 x = 0;//reset counter in get
                 try {//connect to the database
-                    System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                     stmt = conn.createStatement();
                     //determine unique ID
                     ResultSet results = stmt.executeQuery("select expenseID from " + expenseTable + " order by EXPENSEID ASC");
@@ -778,6 +779,20 @@ public class Users implements Serializable {
                     sqlExcept.printStackTrace();
                 }
             }
+    }
+    public void setTable(String t) {//t holds the value that is passed in
+        if ("login".equalsIgnoreCase(t)) {
+            this.login();
+        } else if ("create".equalsIgnoreCase(t)) {
+            this.userCreation();
+        } else if ("income".equalsIgnoreCase(t)) {
+          this.createIncome();
+        } else if ("expense".equalsIgnoreCase(t)) {
+            this.createExpense();
+        } else if ("insertIncome".equalsIgnoreCase(t)) {
+           this.insertIncome();
+        } else if ("insertExpense".equalsIgnoreCase(t)) {
+            this.insertExpense();
         } else if ("removeExpense".equalsIgnoreCase(t)) {
             System.out.println("Getting ready to remove expense...");//test only see glassfish server output
             allExpenseIDs = new int[10000];
@@ -791,7 +806,6 @@ public class Users implements Serializable {
                 except.printStackTrace();
             }
             try {//connect to the database
-                System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                 stmt = conn.createStatement();
                 ResultSet results = stmt.executeQuery("select * from " + expenseTable + " order by EXPENSEID ASC");
                 while (results.next()) {
@@ -828,7 +842,6 @@ public class Users implements Serializable {
                 except.printStackTrace();
             }
             try {//connect to the database
-                System.out.println("Connecting to database for: " + t);//test only see glassfish server output
                 stmt = conn.createStatement();
                 ResultSet results = stmt.executeQuery("select * from " + incomeTable + " order by INCOMEID ASC");
                 while (results.next()) {
