@@ -1,5 +1,6 @@
 package budget;
 
+import budget.constants.TABLE_ACTIONS;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -72,7 +73,7 @@ public class Users implements Serializable {
     private int countI;
     private int i = 0;
     private int e = 0;
-    
+
     //information sent from the page to update the java page
     public void setUserID(String userID) {
         this.userID = userID;
@@ -110,6 +111,7 @@ public class Users implements Serializable {
     public void setDate(String date) {
         this.date = date;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -222,7 +224,6 @@ public class Users implements Serializable {
     public String getExpenseID() {
         return expenseID;
     }
-
 
     public Boolean getInsertSuccess() {
         return insertSuccess;
@@ -457,427 +458,443 @@ public class Users implements Serializable {
         return count / 5;
     }
 
-    private void login(){
-        try{
-            Class.forName("com.mysql.jdbc.Driver");        
-        }catch(ClassNotFoundException s){ s.printStackTrace();}
-            System.out.println("Logging in...");//test only see glassfish server output
-            allIncomeIDs = new int[10000];
-            incomeIDCount = 0;
-            allExpenseIDs = new int[10000];
-            expenseIDCount = 0;
-            this.loginAttempted = true;
-            count = 0;//reset counter for array
-            x = 0;//reset counter in get
-            try {
-                Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                //Get a connection
-                conn = DriverManager.getConnection(dbURL);
-            } catch (Exception except) {
-                except.printStackTrace();
-            }
-            try {//connect to the database
-                stmt = conn.createStatement();
-                ResultSet results = stmt.executeQuery("select * from " + usersTable);
-                while (results.next()) {
-                    String userID = results.getString(1);
-                    String username = results.getString(2);
-                    String password = results.getString(3);
-                    String name = results.getString(4);
-                    if (this.username.equalsIgnoreCase(username) && this.password.equals(password)) {
-                        this.userID = userID;
-                        this.username = username;
-                        this.name = name;
-                        System.out.println("User exists and passwords match!");//test only see glassfish server output
-                        break;//kill the loop after a valid user is found
-                    } else if (this.username.equalsIgnoreCase(username)) {
-                        System.out.println("User exists, but password is wrong...");//test only see glassfish server output
-                    }
-                    count++;
+    private void login() {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException s) {
+            s.printStackTrace();
+        }
+        System.out.println("Logging in...");//test only see glassfish server output
+        allIncomeIDs = new int[10000];
+        incomeIDCount = 0;
+        allExpenseIDs = new int[10000];
+        expenseIDCount = 0;
+        this.loginAttempted = true;
+        count = 0;//reset counter for array
+        x = 0;//reset counter in get
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+            //Get a connection
+            conn = DriverManager.getConnection(dbURL);
+        } catch (Exception except) {
+            except.printStackTrace();
+        }
+        try {//connect to the database
+            stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery("select * from " + usersTable);
+            while (results.next()) {
+                String userID = results.getString(1);
+                String username = results.getString(2);
+                String password = results.getString(3);
+                String name = results.getString(4);
+                if (this.username.equalsIgnoreCase(username) && this.password.equals(password)) {
+                    this.userID = userID;
+                    this.username = username;
+                    this.name = name;
+                    System.out.println("User exists and passwords match!");//test only see glassfish server output
+                    break;//kill the loop after a valid user is found
+                } else if (this.username.equalsIgnoreCase(username)) {
+                    System.out.println("User exists, but password is wrong...");//test only see glassfish server output
                 }
-                results.close();
-                stmt.close();
-            } catch (SQLException sqlExcept) {
-                sqlExcept.printStackTrace();
+                count++;
             }
+            results.close();
+            stmt.close();
+        } catch (SQLException sqlExcept) {
+            sqlExcept.printStackTrace();
+        }
     }
-    
-    private void userCreation(){
+
+    private void userCreation() {
         System.out.println("Creating user...");//test only see glassfish server output
-            allIncomeIDs = new int[10000];
-            incomeIDCount = 0;
-            allExpenseIDs = new int[10000];
-            expenseIDCount = 0;
-            count = 0;//reset counter for array
-            x = 0;//reset counter in get
-            try {
-                Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                //Get a connection
-                conn = DriverManager.getConnection(dbURL);
-            } catch (Exception except) {
-                except.printStackTrace();
-            }
+        allIncomeIDs = new int[10000];
+        incomeIDCount = 0;
+        allExpenseIDs = new int[10000];
+        expenseIDCount = 0;
+        count = 0;//reset counter for array
+        x = 0;//reset counter in get
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+            //Get a connection
+            conn = DriverManager.getConnection(dbURL);
+        } catch (Exception except) {
+            except.printStackTrace();
+        }
 
-            try {//connect to the database
-                stmt = conn.createStatement();
-                ResultSet results = stmt.executeQuery("select * from " + usersTable);
-                while (results.next()) {
-                    String username = results.getString(2);
-                    if (this.username.equalsIgnoreCase(username)) {
-                        System.out.println("Username taken...");
-                        this.userExists = true;
-                        this.userID = "0";
-                        break;//kill the loop after a valid user is found
-                    }
-                }
-                results.close();
-                stmt.close();
-            } catch (SQLException sqlExcept) {
-                sqlExcept.printStackTrace();
-            }
-            if (!userExists) {//check if the user exists
-
-                //checking new user data
-                System.out.println("No other user exist with that username...");
-                System.out.println("Checking matching passwords..." + password + " " + passwordCheck);
-
-                if (!password.equals(passwordCheck)) {//check if passwords match
-                    passwordMismatch = true;
-                    //password matches
-                    System.out.println("Passwords do not match..." + password + " " + passwordCheck);
+        try {//connect to the database
+            stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery("select * from " + usersTable);
+            while (results.next()) {
+                String username = results.getString(2);
+                if (this.username.equalsIgnoreCase(username)) {
+                    System.out.println("Username taken...");
+                    this.userExists = true;
                     this.userID = "0";
-                } else {
-                    System.out.println("Passwords match!");
-                    //END OF TESTING
-                    // Getting row count
-                    System.out.println("Getting unique userID...");//For TESTING...See Glassfish Server for outputs
-
-                    try {//set the database connection
-                        Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                        //Get a connection
-                        conn = DriverManager.getConnection(dbURL);
-                    } catch (Exception except) {
-                        except.printStackTrace();
-                    }
-                    try {//connect to the database
-                        stmt = conn.createStatement();
-                        ResultSet results = stmt.executeQuery("SELECT COUNT(*) AS rowcount from " + usersTable);
-                        results.next();
-                        this.userCounter = results.getInt("rowcount");//set the user counter to the row count
-                        results.close();
-                        stmt.close();
-                    } catch (SQLException sqlExcept) {
-                        sqlExcept.printStackTrace();
-                    }
-                    count = 0;//reset counter for array
-                    x = 0;//reset counter in get
-                    try {
-                        userCounter++;//add a new row and ensure a unique ID
-                        this.userID = userCounter.toString();
-                        Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                        conn = DriverManager.getConnection(dbURL);
-                        stmt = conn.createStatement();
-                        //add a test statement and do not use the data passed into the page (TESTING ONLY)
-                        //stmt.execute("insert into " + usersTable + " values (" + "123" + ",'" + t + "','" + t + "'," + 5 + ",'" + t + ")");
-                        stmt.execute("insert into " + usersTable + " values ('" + userCounter + "','" + username + "','" + password + "','" + name + "','" + email + "')");
-                        stmt.close();
-                        System.out.println("Success in creating user...");//For TESTING...See Glassfish Server for outputs
-                        //set the IDs and login the user
-                        stmt.close();
-                    } catch (Exception sqlExcept) {
-                        System.out.println("Failure to create user");//For TESTING...See Glassfish Server for outputs
-                        sqlExcept.printStackTrace();
-                    }
+                    break;//kill the loop after a valid user is found
                 }
             }
-    }
-    
-    private void createIncome(){
-          System.out.println("Getting income...");//test only see glassfish server output
-            allIncomeIDs = new int[10000];
-            incomeIDCount = 0;
-            count = 0;//reset counter for array
-            x = 0;//reset counter in get
-            try {
-                Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                //Get a connection
-                conn = DriverManager.getConnection(dbURL);
-            } catch (Exception except) {
-                except.printStackTrace();
-            }
-            try {//connect to the database
-                stmt = conn.createStatement();
-                ResultSet results = stmt.executeQuery("select * from " + incomeTable + " order by INCOMEID ASC");
-                int onlyOnce = 0;//only load the object array once
-                while (results.next()) {
-                    String userID = results.getString(2);
-                    double amount = results.getDouble(5);
+            results.close();
+            stmt.close();
+        } catch (SQLException sqlExcept) {
+            sqlExcept.printStackTrace();
+        }
+        if (!userExists) {//check if the user exists
 
-                    if (userID.equalsIgnoreCase(this.userID)) {//only display for the USERID logged in or try and validate this information later
-                        if (onlyOnce == 0) {
-                            onlyOnce++;
-                            System.out.println("Loading income array...");//test only see glassfish server output
-                            getIncomeObjectCount();
-                        }
-                        this.total += amount;
-                    }
-                    count++;
+            //checking new user data
+            System.out.println("No other user exist with that username...");
+            System.out.println("Checking matching passwords..." + password + " " + passwordCheck);
+
+            if (!password.equals(passwordCheck)) {//check if passwords match
+                passwordMismatch = true;
+                //password matches
+                System.out.println("Passwords do not match..." + password + " " + passwordCheck);
+                this.userID = "0";
+            } else {
+                System.out.println("Passwords match!");
+                //END OF TESTING
+                // Getting row count
+                System.out.println("Getting unique userID...");//For TESTING...See Glassfish Server for outputs
+
+                try {//set the database connection
+                    Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+                    //Get a connection
+                    conn = DriverManager.getConnection(dbURL);
+                } catch (Exception except) {
+                    except.printStackTrace();
                 }
-                results.close();
-                stmt.close();
-            } catch (SQLException sqlExcept) {
-                sqlExcept.printStackTrace();
+                try {//connect to the database
+                    stmt = conn.createStatement();
+                    ResultSet results = stmt.executeQuery("SELECT COUNT(*) AS rowcount from " + usersTable);
+                    results.next();
+                    this.userCounter = results.getInt("rowcount");//set the user counter to the row count
+                    results.close();
+                    stmt.close();
+                } catch (SQLException sqlExcept) {
+                    sqlExcept.printStackTrace();
+                }
+                count = 0;//reset counter for array
+                x = 0;//reset counter in get
+                try {
+                    userCounter++;//add a new row and ensure a unique ID
+                    this.userID = userCounter.toString();
+                    Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+                    conn = DriverManager.getConnection(dbURL);
+                    stmt = conn.createStatement();
+                    //add a test statement and do not use the data passed into the page (TESTING ONLY)
+                    //stmt.execute("insert into " + usersTable + " values (" + "123" + ",'" + t + "','" + t + "'," + 5 + ",'" + t + ")");
+                    stmt.execute("insert into " + usersTable + " values ('" + userCounter + "','" + username + "','" + password + "','" + name + "','" + email + "')");
+                    stmt.close();
+                    System.out.println("Success in creating user...");//For TESTING...See Glassfish Server for outputs
+                    //set the IDs and login the user
+                    stmt.close();
+                } catch (Exception sqlExcept) {
+                    System.out.println("Failure to create user");//For TESTING...See Glassfish Server for outputs
+                    sqlExcept.printStackTrace();
+                }
             }
+        }
     }
-    private void createExpense(){
+
+    private void createIncome() {
+        System.out.println("Getting income...");//test only see glassfish server output
+        allIncomeIDs = new int[10000];
+        incomeIDCount = 0;
+        count = 0;//reset counter for array
+        x = 0;//reset counter in get
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+            //Get a connection
+            conn = DriverManager.getConnection(dbURL);
+        } catch (Exception except) {
+            except.printStackTrace();
+        }
+        try {//connect to the database
+            stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery("select * from " + incomeTable + " order by INCOMEID ASC");
+            int onlyOnce = 0;//only load the object array once
+            while (results.next()) {
+                String userID = results.getString(2);
+                double amount = results.getDouble(5);
+
+                if (userID.equalsIgnoreCase(this.userID)) {//only display for the USERID logged in or try and validate this information later
+                    if (onlyOnce == 0) {
+                        onlyOnce++;
+                        System.out.println("Loading income array...");//test only see glassfish server output
+                        getIncomeObjectCount();
+                    }
+                    this.total += amount;
+                }
+                count++;
+            }
+            results.close();
+            stmt.close();
+        } catch (SQLException sqlExcept) {
+            sqlExcept.printStackTrace();
+        }
+    }
+
+    private void createExpense() {
         System.out.println("Getting Expenses...");//test only see glassfish server output
-            allExpenseIDs = new int[10000];
-            expenseIDCount = 0;
+        allExpenseIDs = new int[10000];
+        expenseIDCount = 0;
+        count = 0;//reset counter for array
+        x = 0;//reset counter in get
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+            //Get a connection
+            conn = DriverManager.getConnection(dbURL);
+        } catch (Exception except) {
+            except.printStackTrace();
+        }
+        try {//connect to the database
+            stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery("select * from " + expenseTable + " order by EXPENSEID ASC");
+            int onlyOnce = 0;
+            while (results.next()) {
+                String userID = results.getString(2);
+                double amount = results.getDouble(5);
+                if (userID.equalsIgnoreCase(this.userID)) {//only display for the USERID logged in 
+                    if (onlyOnce == 0) {
+                        onlyOnce++;
+                        System.out.println("Loading expense array..");//test only see glassfish server output
+                        getExpenseObjectCount();
+                    }
+                    this.total -= amount;
+                }
+                count++;
+            }
+            results.close();
+            stmt.close();
+        } catch (SQLException sqlExcept) {
+            sqlExcept.printStackTrace();
+        }
+    }
+
+    private void insertIncome() {
+        System.out.println("Getting ready to insert income...");//test only see glassfish server output
+        if (type.isEmpty() || amount.isEmpty() || !isAmountDouble(amount)) {
+            if (type.isEmpty()) {
+                System.out.println("type is empty...exiting!");
+                typeEmpty = true;
+            }
+            if (amount.isEmpty()) {
+                System.out.println("amount is empty...exiting! ");
+                amountEmpty = true;
+            }
+            if (!isAmountDouble(amount)) {
+                System.out.println("amount is not a number...exiting! ");
+                amountNotNumber = true;
+            }
+        } else {
+            System.out.println("insert income data valid...");//test only see glassfish server output
+            count = 0;//reset counter for array
+            x = 0;//reset counter in get
+            try {//connect to the database
+                stmt = conn.createStatement();
+                //determine unique ID
+                ResultSet results = stmt.executeQuery("select incomeID from " + incomeTable + " order by INCOMEID ASC");
+                while (results.next()) {
+                    int incomeID = results.getInt(1);
+                    if (incomeCounter == incomeID) {
+                        this.incomeCounter++;
+                    }
+                }
+                results.close();
+                stmt.close();
+            } catch (SQLException sqlExcept) {
+                sqlExcept.printStackTrace();
+            }
             count = 0;//reset counter for array
             x = 0;//reset counter in get
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                //Get a connection
                 conn = DriverManager.getConnection(dbURL);
-            } catch (Exception except) {
-                except.printStackTrace();
-            }
-            try {//connect to the database
                 stmt = conn.createStatement();
-                ResultSet results = stmt.executeQuery("select * from " + expenseTable + " order by EXPENSEID ASC");
-                int onlyOnce = 0;
-                while (results.next()) {
-                    String userID = results.getString(2);
-                    double amount = results.getDouble(5);
-                    if (userID.equalsIgnoreCase(this.userID)) {//only display for the USERID logged in 
-                        if (onlyOnce == 0) {
-                            onlyOnce++;
-                            System.out.println("Loading expense array..");//test only see glassfish server output
-                            getExpenseObjectCount();
-                        }
-                        this.total -= amount;
-                    }
-                    count++;
+                //remove any extra 0's
+                double d = Double.parseDouble(amount);
+                if (d < 0) {//no negate inputs allowed
+                    d *= -1;
                 }
-                results.close();
+                System.out.println("Inserting income...");//test only see glassfish server output
+                stmt.execute("insert into " + incomeTable + " values (" + incomeCounter + ",'" + userID + "','" + date + "','" + type + "','" + df.format(d) + "','" + notes + "')");
                 stmt.close();
-            } catch (SQLException sqlExcept) {
+                System.out.println("income data inserted!");//test only see glassfish server output
+                insertSuccess = true;
+                this.amount = "";
+                this.type = "";
+                this.notes = "";
+            } catch (Exception sqlExcept) {
+                System.out.println("Failure..." + sqlExcept);//test only see glassfish server output
                 sqlExcept.printStackTrace();
             }
+        }
     }
-    
-    private void insertIncome(){
-         System.out.println("Getting ready to insert income...");//test only see glassfish server output
-            if (type.isEmpty() || amount.isEmpty() || !isAmountDouble(amount)) {
-                if (type.isEmpty()) {
-                    System.out.println("type is empty...exiting!");
-                    typeEmpty = true;
-                }
-                if (amount.isEmpty()) {
-                    System.out.println("amount is empty...exiting! ");
-                    amountEmpty = true;
-                }
-                if (!isAmountDouble(amount)) {
-                    System.out.println("amount is not a number...exiting! ");
-                    amountNotNumber = true;
-                }
-            } else {
-                System.out.println("insert income data valid...");//test only see glassfish server output
-                count = 0;//reset counter for array
-                x = 0;//reset counter in get
-                try {//connect to the database
-                    stmt = conn.createStatement();
-                    //determine unique ID
-                    ResultSet results = stmt.executeQuery("select incomeID from " + incomeTable + " order by INCOMEID ASC");
-                    while (results.next()) {
-                        int incomeID = results.getInt(1);
-                        if (incomeCounter == incomeID) {
-                            this.incomeCounter++;
-                        }
-                    }
-                    results.close();
-                    stmt.close();
-                } catch (SQLException sqlExcept) {
-                    sqlExcept.printStackTrace();
-                }
-                count = 0;//reset counter for array
-                x = 0;//reset counter in get
-                try {
-                    Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                    conn = DriverManager.getConnection(dbURL);
-                    stmt = conn.createStatement();
-                    //remove any extra 0's
-                    double d = Double.parseDouble(amount);
-                    if (d < 0) {//no negate inputs allowed
-                        d *= -1;
-                    }
-                    System.out.println("Inserting income...");//test only see glassfish server output
-                    stmt.execute("insert into " + incomeTable + " values (" + incomeCounter + ",'" + userID + "','" + date + "','" + type + "','" + df.format(d) + "','" + notes + "')");
-                    stmt.close();
-                    System.out.println("income data inserted!");//test only see glassfish server output
-                    insertSuccess = true;
-                    this.amount = "";
-                    this.type = "";
-                    this.notes = "";
-                } catch (Exception sqlExcept) {
-                    System.out.println("Failure..." + sqlExcept);//test only see glassfish server output
-                    sqlExcept.printStackTrace();
-                }
+
+    private void insertExpense() {
+        System.out.println("Getting ready to insert expense...");//test only see glassfish server output
+        if (type.isEmpty() || amount.isEmpty() || !isAmountDouble(amount)) {
+            if (type.isEmpty()) {
+                System.out.println("type is empty... exiting! ");
+                typeEmpty = true;
             }
-    }
-    
-    private void insertExpense(){
-          System.out.println("Getting ready to insert expense...");//test only see glassfish server output
-            if (type.isEmpty() || amount.isEmpty() || !isAmountDouble(amount)) {
-                if (type.isEmpty()) {
-                    System.out.println("type is empty... exiting! ");
-                    typeEmpty = true;
-                }
-                if (amount.isEmpty()) {
-                    System.out.println("amount is empty... exiting! ");
-                    amountEmpty = true;
-                }
-                if (!isAmountDouble(amount)) {
-                    System.out.println("amount is not a number... exiting! ");
-                    amountNotNumber = true;
-                }
-            } else {
-                System.out.println("expense data is valid...");//test only see glassfish server output
-                count = 0;//reset counter for array
-                x = 0;//reset counter in get
-                try {//connect to the database
-                    stmt = conn.createStatement();
-                    //determine unique ID
-                    ResultSet results = stmt.executeQuery("select expenseID from " + expenseTable + " order by EXPENSEID ASC");
-                    while (results.next()) {
-                        int expenseID = results.getInt(1);
-                        if (expenseCounter == expenseID) {
-                            this.expenseCounter++;
-                        }
-                    }
-                    results.close();
-                    stmt.close();
-                } catch (SQLException sqlExcept) {
-                    sqlExcept.printStackTrace();
-                }
-                count = 0;//reset counter for array
-                x = 0;//reset counter in get
-                try {
-                    Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                    conn = DriverManager.getConnection(dbURL);
-                    stmt = conn.createStatement();
-                    double d = Double.parseDouble(amount);
-                    if (d < 0) {
-                        d *= -1;
-                    }
-                    System.out.println("Inserting expense..");//test only see glassfish server output
-                    stmt.execute("insert into " + expenseTable + " values (" + expenseCounter + ",'" + userID + "','" + date + "','" + type + "','" + df.format(d) + "','" + notes + "')");
-                    stmt.close();
-                    System.out.println("insert expense successful!");//test only see glassfish server output
-                    insertSuccess = true;
-                    this.amount = "";
-                    this.type = "";
-                    this.notes = "";
-                } catch (Exception sqlExcept) {
-                    System.out.println("Failure: " + sqlExcept);//test only see glassfish server output
-                    sqlExcept.printStackTrace();
-                }
+            if (amount.isEmpty()) {
+                System.out.println("amount is empty... exiting! ");
+                amountEmpty = true;
             }
-    }
-    private void removeExpense(){
-          System.out.println("Getting ready to remove expense...");//test only see glassfish server output
-            allExpenseIDs = new int[10000];
-            expenseIDCount = 0;
-            x = 0;
-            try {
-                Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                //Get a connection
-                conn = DriverManager.getConnection(dbURL);
-            } catch (Exception except) {
-                except.printStackTrace();
+            if (!isAmountDouble(amount)) {
+                System.out.println("amount is not a number... exiting! ");
+                amountNotNumber = true;
             }
-            try {//connect to the database
-                stmt = conn.createStatement();
-                ResultSet results = stmt.executeQuery("select * from " + expenseTable + " order by EXPENSEID ASC");
-                while (results.next()) {
-                    String expenseID = results.getString(1);
-                    String userID = results.getString(2);
-                    expenseError = true;//true if nothing is found
-                    if (userID.equalsIgnoreCase(this.userID)) {
-                        if (expenseID.equalsIgnoreCase(this.expenseID)) {
-                            System.out.println("Found expense to remove!");//test only see glassfish server output
-                            expenseError = false;
-                            expenseRemoved = true;
-                            stmt.execute("Delete from " + expenseTable + " where expenseID = " + expenseID);
-                            System.out.println("Expense with expense ID " + expenseID + " deleted!");//test only see glassfish server output
-                            break;//A. no need to keep going B. While loop flags an error (because there is no next if deleting last row)
-                        } else {
-                        }
-                    }
-                }
-                results.close();
-                stmt.close();
-            } catch (SQLException sqlExcept) {
-                sqlExcept.printStackTrace();
-            }
-    }
-    
-    private void removeIncome(){
-            System.out.println("Getting ready to remove income...");//test only see glassfish server output
-            allIncomeIDs = new int[10000];
-            incomeIDCount = 0;
-            x = 0;
-            try {
-                Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-                //Get a connection
-                conn = DriverManager.getConnection(dbURL);
-            } catch (Exception except) {
-                except.printStackTrace();
-            }
-            try {//connect to the database
-                stmt = conn.createStatement();
-                ResultSet results = stmt.executeQuery("select * from " + incomeTable + " order by INCOMEID ASC");
-                while (results.next()) {
-                    String incomeID = results.getString(1);
-                    String userID = results.getString(2);
-                    incomeError = true;//true if nothing is found
-                    if (userID.equalsIgnoreCase(this.userID)) {
-                        if (incomeID.equalsIgnoreCase(this.incomeID)) {
-                            System.out.println("Found income to remove...");//test only see glassfish server output
-                            incomeError = false;
-                            incomeRemoved = true;
-                            stmt.execute("Delete from " + incomeTable + " where incomeID = " + incomeID);
-                            System.out.println("Income with incomeID " + incomeID + " removed!");//test only see glassfish server output
-                            break;//A. no need to keep going B. While loop flags an error (because there is no next if deleting last row)
-                        } else {
-                        }
-                    }
-                }
-                results.close();
-                stmt.close();
-            } catch (SQLException sqlExcept) {
-                sqlExcept.printStackTrace();
-            }
-    }
-    public void setTable(String t) {//t holds the value that is passed in
-        if ("login".equalsIgnoreCase(t)) {
-            this.login();
-        } else if ("create".equalsIgnoreCase(t)) {
-            this.userCreation();
-        } else if ("income".equalsIgnoreCase(t)) {
-          this.createIncome();
-        } else if ("expense".equalsIgnoreCase(t)) {
-            this.createExpense();
-        } else if ("insertIncome".equalsIgnoreCase(t)) {
-           this.insertIncome();
-        } else if ("insertExpense".equalsIgnoreCase(t)) {
-            this.insertExpense();
-        } else if ("removeExpense".equalsIgnoreCase(t)) {
-            this.removeExpense();
-        } else if ("removeIncome".equalsIgnoreCase(t)) {
-               this.removeIncome();
         } else {
-            System.out.println("Error... nothing caught in setTable... Please ensure proper case of operation.  Such as(insertExpense..etc");//test only see glassfish server output
+            System.out.println("expense data is valid...");//test only see glassfish server output
+            count = 0;//reset counter for array
+            x = 0;//reset counter in get
+            try {//connect to the database
+                stmt = conn.createStatement();
+                //determine unique ID
+                ResultSet results = stmt.executeQuery("select expenseID from " + expenseTable + " order by EXPENSEID ASC");
+                while (results.next()) {
+                    int expenseID = results.getInt(1);
+                    if (expenseCounter == expenseID) {
+                        this.expenseCounter++;
+                    }
+                }
+                results.close();
+                stmt.close();
+            } catch (SQLException sqlExcept) {
+                sqlExcept.printStackTrace();
+            }
+            count = 0;//reset counter for array
+            x = 0;//reset counter in get
+            try {
+                Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+                conn = DriverManager.getConnection(dbURL);
+                stmt = conn.createStatement();
+                double d = Double.parseDouble(amount);
+                if (d < 0) {
+                    d *= -1;
+                }
+                System.out.println("Inserting expense..");//test only see glassfish server output
+                stmt.execute("insert into " + expenseTable + " values (" + expenseCounter + ",'" + userID + "','" + date + "','" + type + "','" + df.format(d) + "','" + notes + "')");
+                stmt.close();
+                System.out.println("insert expense successful!");//test only see glassfish server output
+                insertSuccess = true;
+                this.amount = "";
+                this.type = "";
+                this.notes = "";
+            } catch (Exception sqlExcept) {
+                System.out.println("Failure: " + sqlExcept);//test only see glassfish server output
+                sqlExcept.printStackTrace();
+            }
+        }
+    }
+
+    private void removeExpense() {
+        System.out.println("Getting ready to remove expense...");//test only see glassfish server output
+        allExpenseIDs = new int[10000];
+        expenseIDCount = 0;
+        x = 0;
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+            //Get a connection
+            conn = DriverManager.getConnection(dbURL);
+        } catch (Exception except) {
+            except.printStackTrace();
+        }
+        try {//connect to the database
+            stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery("select * from " + expenseTable + " order by EXPENSEID ASC");
+            while (results.next()) {
+                String expenseID = results.getString(1);
+                String userID = results.getString(2);
+                expenseError = true;//true if nothing is found
+                if (userID.equalsIgnoreCase(this.userID)) {
+                    if (expenseID.equalsIgnoreCase(this.expenseID)) {
+                        System.out.println("Found expense to remove!");//test only see glassfish server output
+                        expenseError = false;
+                        expenseRemoved = true;
+                        stmt.execute("Delete from " + expenseTable + " where expenseID = " + expenseID);
+                        System.out.println("Expense with expense ID " + expenseID + " deleted!");//test only see glassfish server output
+                        break;//A. no need to keep going B. While loop flags an error (because there is no next if deleting last row)
+                    } else {
+                    }
+                }
+            }
+            results.close();
+            stmt.close();
+        } catch (SQLException sqlExcept) {
+            sqlExcept.printStackTrace();
+        }
+    }
+
+    private void removeIncome() {
+        System.out.println("Getting ready to remove income...");//test only see glassfish server output
+        allIncomeIDs = new int[10000];
+        incomeIDCount = 0;
+        x = 0;
+        try {
+            Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
+            //Get a connection
+            conn = DriverManager.getConnection(dbURL);
+        } catch (Exception except) {
+            except.printStackTrace();
+        }
+        try {//connect to the database
+            stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery("select * from " + incomeTable + " order by INCOMEID ASC");
+            while (results.next()) {
+                String incomeID = results.getString(1);
+                String userID = results.getString(2);
+                incomeError = true;//true if nothing is found
+                if (userID.equalsIgnoreCase(this.userID)) {
+                    if (incomeID.equalsIgnoreCase(this.incomeID)) {
+                        System.out.println("Found income to remove...");//test only see glassfish server output
+                        incomeError = false;
+                        incomeRemoved = true;
+                        stmt.execute("Delete from " + incomeTable + " where incomeID = " + incomeID);
+                        System.out.println("Income with incomeID " + incomeID + " removed!");//test only see glassfish server output
+                        break;//A. no need to keep going B. While loop flags an error (because there is no next if deleting last row)
+                    } else {
+                    }
+                }
+            }
+            results.close();
+            stmt.close();
+        } catch (SQLException sqlExcept) {
+            sqlExcept.printStackTrace();
+        }
+    }
+
+    public void setTable(String t) {//t holds the value that is passed in
+
+        switch (t.toLowerCase()) {
+            case TABLE_ACTIONS.LOGIN:
+                this.login();
+                break;
+            case TABLE_ACTIONS.CREATE:
+                this.userCreation();
+                break;
+            case TABLE_ACTIONS.INCOME:
+                this.createIncome();
+                break;
+            case TABLE_ACTIONS.EXPENSE:
+                this.createExpense();
+                break;
+            case TABLE_ACTIONS.INSERT_INCOME:
+                this.createIncome();
+                break;
+            case TABLE_ACTIONS.INSERT_EXPENSE:
+                this.insertExpense();
+                break;
+            case TABLE_ACTIONS.REMOVE_EXPENSE:
+                this.removeExpense();
+                break;
+
+            case TABLE_ACTIONS.REMOVE_INCOME:
+                this.removeIncome();
+                break;
+            default:
+                System.err.println("?");
         }
     }
 }
