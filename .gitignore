@@ -1,3 +1,10 @@
 /ExpenseTracker/build/
 /ExpenseTracker/dist/
-/ExpenseTracker/nbproject
+/ExpenseTracker/nbproject/
+ExpenseTracker/nbproject/project.properties
+
+ExpenseTracker/nbproject/private/private.properties
+ExpenseTracker/nbproject/private/private.xml
+ExpenseTracker/nbproject/genfiles.properties
+ExpenseTracker/nbproject/build-impl.xml
+ExpenseTracker/nbproject/ant-deploy.xml
