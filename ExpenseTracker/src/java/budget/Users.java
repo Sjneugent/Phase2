@@ -54,10 +54,10 @@ public class Users implements Serializable {
     private static int count = 0;
     private static int expenseIDCount = 0;
     private static int incomeIDCount = 0;
-    private static String dbURL = "jdbc:mysql://localhost:3306/expense?user=nbuser&password=nbuser";
-    private static String usersTable = "APP.Users";
-    private static String incomeTable = "APP.Income";
-    private static String expenseTable = "APP.Expenses";
+    private static String dbURL = "jdbc:mysql://localhost:3306/expense?user=nbuser&password=nbuser&useSSL=false&useTimeZone=true&serverTimezone=UTC";
+    private static String usersTable = "expense.Users";
+    private static String incomeTable = "expense.Income";
+    private static String expenseTable = "expense.Expenses";
     private static int x;
     private Integer userCounter;//count number of users 
     private Integer incomeCounter = 0;//count rows of income
@@ -72,7 +72,7 @@ public class Users implements Serializable {
     private int countI;
     private int i = 0;
     private int e = 0;
-
+    
     //information sent from the page to update the java page
     public void setUserID(String userID) {
         this.userID = userID;
@@ -211,6 +211,7 @@ public class Users implements Serializable {
     }
 
     public String getTable() {
+        System.err.println("do i get here");
         return table;
     }
 
@@ -457,7 +458,10 @@ public class Users implements Serializable {
     }
 
     private void login(){
-        System.out.println("Logging in...");//test only see glassfish server output
+        try{
+            Class.forName("com.mysql.jdbc.Driver");        
+        }catch(ClassNotFoundException s){ s.printStackTrace();}
+            System.out.println("Logging in...");//test only see glassfish server output
             allIncomeIDs = new int[10000];
             incomeIDCount = 0;
             allExpenseIDs = new int[10000];
@@ -780,21 +784,8 @@ public class Users implements Serializable {
                 }
             }
     }
-    public void setTable(String t) {//t holds the value that is passed in
-        if ("login".equalsIgnoreCase(t)) {
-            this.login();
-        } else if ("create".equalsIgnoreCase(t)) {
-            this.userCreation();
-        } else if ("income".equalsIgnoreCase(t)) {
-          this.createIncome();
-        } else if ("expense".equalsIgnoreCase(t)) {
-            this.createExpense();
-        } else if ("insertIncome".equalsIgnoreCase(t)) {
-           this.insertIncome();
-        } else if ("insertExpense".equalsIgnoreCase(t)) {
-            this.insertExpense();
-        } else if ("removeExpense".equalsIgnoreCase(t)) {
-            System.out.println("Getting ready to remove expense...");//test only see glassfish server output
+    private void removeExpense(){
+          System.out.println("Getting ready to remove expense...");//test only see glassfish server output
             allExpenseIDs = new int[10000];
             expenseIDCount = 0;
             x = 0;
@@ -829,7 +820,9 @@ public class Users implements Serializable {
             } catch (SQLException sqlExcept) {
                 sqlExcept.printStackTrace();
             }
-        } else if ("removeIncome".equalsIgnoreCase(t)) {
+    }
+    
+    private void removeIncome(){
             System.out.println("Getting ready to remove income...");//test only see glassfish server output
             allIncomeIDs = new int[10000];
             incomeIDCount = 0;
@@ -865,6 +858,24 @@ public class Users implements Serializable {
             } catch (SQLException sqlExcept) {
                 sqlExcept.printStackTrace();
             }
+    }
+    public void setTable(String t) {//t holds the value that is passed in
+        if ("login".equalsIgnoreCase(t)) {
+            this.login();
+        } else if ("create".equalsIgnoreCase(t)) {
+            this.userCreation();
+        } else if ("income".equalsIgnoreCase(t)) {
+          this.createIncome();
+        } else if ("expense".equalsIgnoreCase(t)) {
+            this.createExpense();
+        } else if ("insertIncome".equalsIgnoreCase(t)) {
+           this.insertIncome();
+        } else if ("insertExpense".equalsIgnoreCase(t)) {
+            this.insertExpense();
+        } else if ("removeExpense".equalsIgnoreCase(t)) {
+            this.removeExpense();
+        } else if ("removeIncome".equalsIgnoreCase(t)) {
+               this.removeIncome();
         } else {
             System.out.println("Error... nothing caught in setTable... Please ensure proper case of operation.  Such as(insertExpense..etc");//test only see glassfish server output
         }
